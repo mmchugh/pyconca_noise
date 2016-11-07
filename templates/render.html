@@ -7,14 +7,15 @@
     var renderer;
     var scene;
     var camera;
+    var geometry;
+    var material;
     var current_mesh;
 
     var renderTerrain = function(data) {
         if(scene !== undefined && current_mesh !== undefined) {
             scene.remove(current_mesh);
         }
-        var geometry = new THREE.PlaneGeometry(60, 60, data.width-1, data.height-1);
-        var material = new THREE.MeshPhongMaterial( { color: 0xCCCCCC, wireframe: true } );
+        geometry = new THREE.PlaneGeometry(60, 60, data.width-1, data.height-1);
         current_mesh = new THREE.Mesh( geometry, material );
 
         for (var i = 0, l = geometry.vertices.length; i < l; i++) {
@@ -31,6 +32,11 @@
         renderer.render( scene, camera );
 
     };
+
+    var toggleWireframe = function() {
+        material.wireframe = !material.wireframe;
+        renderer.render(scene, camera);
+    }
 
     var init = function() {
         renderer = new THREE.WebGLRenderer();
@@ -51,6 +57,8 @@
         var light = new THREE.DirectionalLight( 0xFFFFFF, 0.9 );
         light.position.set( 1, 0, 1 );
         scene.add( light );
+
+        material = new THREE.MeshPhongMaterial( { color: 0xCCCCCC, wireframe: true } );
     };
 
     var fetchData = function(style) {
@@ -73,6 +81,9 @@
     <p>
     <button onclick="fetchData('random');">Random</button>
     <button onclick="fetchData('sine');">Sine</button>
+    </p>
+    <p>
+    <button onclick="toggleWireframe();">Toggle Wireframe</button>
     </p>
 </body>
 </html>

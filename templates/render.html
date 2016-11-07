@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Height Map Render</title>
+    <script src="js/three.min.js"></script>
+    <script>
+    var renderTerrain = function(data) {
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize( 800, 600 );
+        document.body.appendChild( renderer.domElement );
+
+        var scene = new THREE.Scene();
+
+        var camera = new THREE.PerspectiveCamera(
+            35,             // Field of view
+            800 / 600,      // Aspect ratio
+            0.1,            // Near plane
+            10000           // Far plane
+        );
+        camera.position.set( 20, -80, 100 );
+        camera.lookAt( scene.position );
+
+        var geometry = new THREE.PlaneGeometry(60, 60, data.width-1, data.height-1);
+        var material = new THREE.MeshPhongMaterial( { color: 0xCCCCCC, wireframe: true } );
+        var mesh = new THREE.Mesh( geometry, material );
+
+        for (var i = 0, l = geometry.vertices.length; i < l; i++) {
+          geometry.vertices[i].z = data.values[i];
+        }
+        geometry.computeFaceNormals();
+        geometry.computeVertexNormals();
+        geometry.__dirtyVertices = true;
+        geometry.__dirtyNormals = true;
+
+        scene.add( mesh );
+
+
+        var light = new THREE.DirectionalLight( 0xFFFFFF, 0.9 );
+        light.position.set( 1, 0, 1 );
+        scene.add( light );
+
+        renderer.setClearColor( 0xdddddd, 1);
+        renderer.render( scene, camera );
+
+    };
+
+    window.onload = function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("get", "/data/sine/", true);
+        xhr.responseType = "json";
+        xhr.onload = function() {
+          renderTerrain(xhr.response);
+        };
+        xhr.send();
+    };
+    </script>
+</head>
+<body></body>
+</html>

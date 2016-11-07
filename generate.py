@@ -3,10 +3,6 @@ import math
 import random
 
 
-def waves(x, y):
-    return ((x + y) % 5) * ((x + y) % 3)
-
-
 def all_random(x, y):
     return random.random() * 20.0
 
@@ -16,7 +12,6 @@ def simple_sine(x, y):
 
 
 STYLES = {
-    'waves': waves,
     'random': all_random,
     'sine': simple_sine,
 }

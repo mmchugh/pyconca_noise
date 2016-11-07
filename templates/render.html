@@ -4,26 +4,18 @@
     <title>Height Map Render</title>
     <script src="js/three.min.js"></script>
     <script>
+    var renderer;
+    var scene;
+    var camera;
+    var current_mesh;
+
     var renderTerrain = function(data) {
-
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize( 800, 600 );
-        document.body.appendChild( renderer.domElement );
-
-        var scene = new THREE.Scene();
-
-        var camera = new THREE.PerspectiveCamera(
-            35,             // Field of view
-            800 / 600,      // Aspect ratio
-            0.1,            // Near plane
-            10000           // Far plane
-        );
-        camera.position.set( 20, -80, 100 );
-        camera.lookAt( scene.position );
-
+        if(scene !== undefined && current_mesh !== undefined) {
+            scene.remove(current_mesh);
+        }
         var geometry = new THREE.PlaneGeometry(60, 60, data.width-1, data.height-1);
         var material = new THREE.MeshPhongMaterial( { color: 0xCCCCCC, wireframe: true } );
-        var mesh = new THREE.Mesh( geometry, material );
+        current_mesh = new THREE.Mesh( geometry, material );
 
         for (var i = 0, l = geometry.vertices.length; i < l; i++) {
           geometry.vertices[i].z = data.values[i];
@@ -33,28 +25,54 @@
         geometry.__dirtyVertices = true;
         geometry.__dirtyNormals = true;
 
-        scene.add( mesh );
-
-
-        var light = new THREE.DirectionalLight( 0xFFFFFF, 0.9 );
-        light.position.set( 1, 0, 1 );
-        scene.add( light );
+        scene.add( current_mesh );
 
         renderer.setClearColor( 0xdddddd, 1);
         renderer.render( scene, camera );
 
     };
 
-    window.onload = function() {
+    var init = function() {
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( 800, 600 );
+        document.body.appendChild( renderer.domElement );
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+            35,             // Field of view
+            800 / 600,      // Aspect ratio
+            0.1,            // Near plane
+            10000           // Far plane
+        );
+        camera.position.set( 20, -80, 100 );
+        camera.lookAt( scene.position );
+
+        var light = new THREE.DirectionalLight( 0xFFFFFF, 0.9 );
+        light.position.set( 1, 0, 1 );
+        scene.add( light );
+    };
+
+    var fetchData = function(style) {
         var xhr = new XMLHttpRequest();
-        xhr.open("get", "/data/sine/", true);
+        xhr.open("get", "/data/" + style + "/", true);
         xhr.responseType = "json";
         xhr.onload = function() {
           renderTerrain(xhr.response);
         };
         xhr.send();
+    }
+
+    window.onload = function() {
+        init();
+        fetchData("sine");
     };
     </script>
 </head>
-<body></body>
+<body>
+    <p>
+    <button onclick="fetchData('random');">Random</button>
+    <button onclick="fetchData('sine');">Sine</button>
+    </p>
+</body>
 </html>

@@ -61,9 +61,19 @@
         material = new THREE.MeshPhongMaterial( { color: 0xCCCCCC, wireframe: true } );
     };
 
-    var fetchData = function(style) {
+    var doOctaves = function() {
+        var octaves = document.getElementById("octaveRange").value
+        var amplitude = document.getElementById("amplitudeRange").value
+        fetchData('octaves', '?octaves=' + octaves + '&amplitude=' + amplitude);
+    }
+
+    var fetchData = function(style, query) {
         var xhr = new XMLHttpRequest();
-        xhr.open("get", "/data/" + style + "/", true);
+        var url = "/data/" + style + "/";
+        if (query !== undefined) {
+            url += query;
+        }
+        xhr.open("get", url, true);
         xhr.responseType = "json";
         xhr.onload = function() {
           renderTerrain(xhr.response);
@@ -81,6 +91,11 @@
     <p>
     <button onclick="fetchData('random');">Random</button>
     <button onclick="fetchData('sine');">Sine</button>
+    </p>
+    <p>
+    octaves: <input type="range" id="octaveRange" min="1" max="8" value="4" />
+    amplitude: <input type="range" id="amplitudeRange" min="1" max="25" value="8" />
+    <button onclick="doOctaves();">Octaves</button>
     </p>
     <p>
     <button onclick="toggleWireframe();">Toggle Wireframe</button>

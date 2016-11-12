@@ -67,6 +67,11 @@
         fetchData('octaves', '?octaves=' + octaves + '&amplitude=' + amplitude);
     }
 
+    var doPower = function() {
+        var power = document.getElementById("exponentText").value
+        fetchData('power', '?exponent=' + power);
+    }
+
     var fetchData = function(style, query) {
         var xhr = new XMLHttpRequest();
         var url = "/data/" + style + "/";
@@ -96,6 +101,10 @@
     octaves: <input type="range" id="octaveRange" min="1" max="8" value="4" />
     amplitude: <input type="range" id="amplitudeRange" min="1" max="25" value="8" />
     <button onclick="doOctaves();">Octaves</button>
+    </p>
+    <p>
+    exponent: <input type="text" id="exponentText" value="1" />
+    <button onclick="doPower();">Power</button>
     </p>
     <p>
     <button onclick="toggleWireframe();">Toggle Wireframe</button>

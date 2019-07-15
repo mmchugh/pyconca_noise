@@ -146,7 +146,7 @@ def generate(value):
     values = []
 
     for x in range(WIDTH):
-        for y in range(WIDTH):
+        for y in range(HEIGHT):
             values.append(value(x, y))
 
     return {
